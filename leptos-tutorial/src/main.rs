@@ -23,6 +23,12 @@ fn App() -> impl IntoView {
         >
             "Click to Move"
         </button>
+        <progress
+            max="50"
+            // signals are functions, so `value=count` and `value=move || count.get()`
+            // are interchangeable.
+            value=count
+        />
     }
 }
 
