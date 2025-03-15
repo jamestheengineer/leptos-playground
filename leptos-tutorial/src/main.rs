@@ -6,6 +6,7 @@ use leptos::prelude::*;
 #[component]
 fn App() -> impl IntoView {
     let (count, set_count) = signal(0);
+    let double_count = move || count.get() * 2;
 
     view! {
         <button
@@ -25,10 +26,13 @@ fn App() -> impl IntoView {
         </button>
         <progress
             max="50"
-            // signals are functions, so `value=count` and `value=move || count.get()`
-            // are interchangeable.
-            value=count
+            // we use it once here
+            value=double_count
         />
+        <p>
+            "Double Count: " // and again here
+            {double_count}
+        </p>
     }
 }
 
