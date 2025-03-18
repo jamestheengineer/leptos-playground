@@ -1,26 +1,29 @@
 use leptos::prelude::*;
-
 #[component]
 fn ProgressBar(
     #[prop(default = 100)]
     max: u16,
-    progress: ReadSignal<i32>
-) -> impl IntoView {
+    #[prop(into)]
+    progress: Signal<i32>
+) -> impl IntoView
+{
     view! {
-        <progress
-            max=max
-            value=progress
-        />
+        <progress max=max value=progress />
+        <br />
     }
 }
 
 #[component]
 fn App() -> impl IntoView {
     let (count, set_count) = signal(0);
+    let double_count = move || count.get() * 2;
+
     view! {
         <button on:click=move |_| *set_count.write() += 1>"Click me"</button>
-        // now we use our component!
-        <ProgressBar max=50 progress=count />
+        // .into() converts `ReadSignal` to `Signal`
+        <ProgressBar progress=count />
+        // use `Signal::derive()` to wrap a derived signal
+        <ProgressBar progress=Signal::derive(double_count) />
     }
 }
 
