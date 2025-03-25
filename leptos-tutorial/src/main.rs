@@ -3,7 +3,7 @@ use leptos::prelude::*;
 #[derive(Debug, Clone)]
 struct DatabaseEntry {
     key: String,
-    value: RwSignal<i32>,
+    value: i32,
 }
 
 #[component]
@@ -12,40 +12,42 @@ pub fn App() -> impl IntoView {
     let (data, set_data) = signal(vec![
         DatabaseEntry {
             key: "foo".to_string(),
-            value: RwSignal::new(10),
+            value: 10,
         },
         DatabaseEntry {
             key: "bar".to_string(),
-            value: RwSignal::new(20),
+            value: 20,
         },
         DatabaseEntry {
             key: "baz".to_string(),
-            value: RwSignal::new(15),
+            value: 15,
         },
     ]);
     view! {
         // when we click, update each row,
         // doubling its value
         <button on:click=move |_| {
-            for row in &*data.read() {
-                row.value.update(|value| *value *= 2);
-            }
-            // log the new value of the signal
+            set_data
+                .update(|data| {
+                    for row in data {
+                        row.value *= 2;
+                    }
+                });
             leptos::logging::log!("{:?}", data.get());
-        }>
-            "Update Values"
-        </button>
+        }>"Update Values"</button>
         // iterate over the rows and display each value
         <For
-            each=move || data.get()
-            key=|state| state.key.clone()
-            let(child)
-        >
-            <p>{child.value}</p>
-        </For>
+            each=move || data.get().into_iter().enumerate()
+            key=|(_, state)| state.key.clone()
+            children=move |(index, _)| {
+                let value = Memo::new(move |_| {
+                    data.with(|data| data.get(index).map(|d| d.value).unwrap_or(0))
+                });
+                view! { <p>{value}</p> }
+            }
+        />
     }
 }
-
 fn main() {
     leptos::mount::mount_to_body(App)
 }
