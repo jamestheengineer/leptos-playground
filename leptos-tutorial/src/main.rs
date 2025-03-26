@@ -1,51 +1,30 @@
 use leptos::prelude::*;
 
-#[derive(Debug, Clone)]
-struct DatabaseEntry {
-    key: String,
-    value: i32,
-}
 
 #[component]
 pub fn App() -> impl IntoView {
-    // start with a set of three rows
-    let (data, set_data) = signal(vec![
-        DatabaseEntry {
-            key: "foo".to_string(),
-            value: 10,
-        },
-        DatabaseEntry {
-            key: "bar".to_string(),
-            value: 20,
-        },
-        DatabaseEntry {
-            key: "baz".to_string(),
-            value: 15,
-        },
-    ]);
+    let (name, set_name) = signal("Controlled".to_string());
+    let email = RwSignal::new("".to_string());
+    let spam_me = RwSignal::new(true);
+    
     view! {
-        // when we click, update each row,
-        // doubling its value
-        <button on:click=move |_| {
-            set_data
-                .update(|data| {
-                    for row in data {
-                        row.value *= 2;
-                    }
-                });
-            leptos::logging::log!("{:?}", data.get());
-        }>"Update Values"</button>
-        // iterate over the rows and display each value
-        <For
-            each=move || data.get().into_iter().enumerate()
-            key=|(_, state)| state.key.clone()
-            children=move |(index, _)| {
-                let value = Memo::new(move |_| {
-                    data.with(|data| data.get(index).map(|d| d.value).unwrap_or(0))
-                });
-                view! { <p>{value}</p> }
-            }
+        <input type="text"
+            bind:value=(name, set_name)
         />
+        <input type="email"
+            bind:value=email
+        />
+        <label>
+            "Please send me lots of spam email."
+            <input type="checkbox"
+                bind:checked=spam_me
+            />
+        </label>
+        <p>"Name is: " {name}</p>
+        <p>"Email is: " {email}</p>
+        <Show when=move || spam_me.get()>
+            <p>"You’ll receive cool bonus content!"</p>
+        </Show>
     }
 }
 fn main() {
