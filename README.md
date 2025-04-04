@@ -1,1 +1,1 @@
-Repo to learn badics of leptos. 
+Repo to learn basics of leptos. 
