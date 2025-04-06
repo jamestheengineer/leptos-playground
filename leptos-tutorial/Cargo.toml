@@ -1,9 +1,11 @@
 [package]
-name = "leptos-tutorial"
+name = "app"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+leptos = { version = "0.7.0-rc1", features = ["csr"] }
 console_error_panic_hook = "0.1.7"
-leptos = { version = "0.7.7", features = ["csr"] }
 gloo-timers = { version = "0.3", features = ["futures"] }
+uuid = { version = "1.11.0", features = ["v4", "js"] }
+send_wrapper = { version = "0.6", features = ["futures"] }
